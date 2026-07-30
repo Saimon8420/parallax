@@ -26,11 +26,11 @@ export function SunArc({ overview, sunPosition }: { overview: SkyOverview; sunPo
           <line x1={noonX} y1="8" x2={noonX} y2="14" className="stroke-muted" strokeWidth="1" />
         )}
         {live && live.visible ? (
-          <circle cx={live.x} cy={live.y} r="4" className="fill-accent" />
+          <circle cx={live.x} cy={live.y} r="4" className="fill-accent" data-sun="live" />
         ) : live && !live.visible ? (
-          <circle cx="100" cy="60" r="3" className="fill-muted" opacity="0.5" />
+          <circle cx="100" cy="60" r="3" className="fill-muted" opacity="0.5" data-sun="below-horizon" />
         ) : (
-          <circle cx="100" cy="15" r="4" className="fill-ink" />
+          <circle cx="100" cy="15" r="4" className="fill-ink" data-sun="static" />
         )}
       </svg>
       <div className="mt-2 flex justify-between text-sm">
