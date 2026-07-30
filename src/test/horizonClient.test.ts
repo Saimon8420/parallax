@@ -66,6 +66,21 @@ describe("normalizeMoonPhases", () => {
       expect(sameDay).toBe(false);
     }
   });
+
+  it("keeps the FIRST event, not the last, when deduping (2026-08-12 New Moon pair)", () => {
+    const rawNewMoons = (moonPhases as any).data.phases.filter((p: any) => p.phase === "New Moon");
+    // Sanity-check the fixture still contains the near-duplicate pair this test relies on.
+    expect(rawNewMoons.length).toBe(2);
+    const [earlier, later] = rawNewMoons;
+    expect(new Date(later.utc).getTime() - new Date(earlier.utc).getTime()).toBeLessThan(6 * 60 * 60 * 1000);
+
+    const phases = normalizeMoonPhases(moonPhases);
+    const survivors = phases.filter((p) => p.phase === "New Moon");
+    expect(survivors.length).toBe(1);
+    // A regression that kept the LAST event instead of the FIRST would fail this.
+    expect(survivors[0].utcISO).toBe(earlier.utc);
+    expect(survivors[0].utcISO).not.toBe(later.utc);
+  });
 });
 
 describe("normalizeCalendar", () => {
