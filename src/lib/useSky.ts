@@ -21,8 +21,8 @@ export function useSky(loc: Location) {
     };
     setLoading(true);
     Promise.all([
-      fetchPositions(loc, ac.signal).then(setPositions).catch(() => setPosError("orrery signal lost")),
-      fetchOverview(loc, ac.signal).then(setOverview).catch(() => setSkyError("horizon signal lost")),
+      fetchPositions(loc, ac.signal).then((p) => alive && setPositions(p)).catch(() => alive && setPosError("orrery signal lost")),
+      fetchOverview(loc, ac.signal).then((o) => alive && setOverview(o)).catch(() => alive && setSkyError("horizon signal lost")),
     ]).finally(() => alive && setLoading(false));
 
     const id = setInterval(loadPositions, 60_000); // "now" refresh
