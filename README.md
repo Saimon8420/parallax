@@ -1,32 +1,43 @@
-# React + TypeScript + Vite
+# Parallax — the sky, right now
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Parallax is an editorial "sky right now" app. It answers a simple question — what's overhead, this moment, from where you're standing — and then deliberately asks it twice, from two different vantage points that don't agree with each other.
 
-Currently, two official plugins are available:
+## Two views, on purpose
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**FROM EARTH** is the geocentric Sky Dial: where the Sun, Moon, and planets actually sit in your local sky right now — altitude, azimuth, rise/set, twilight bands, moon phase.
 
-## React Compiler
+**FROM ABOVE** is the heliocentric Orrery: the same bodies' positions in their orbits around the Sun, ecliptic longitude and all.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+These two views intentionally don't line up. A planet's place in Earth's sky and its orbital angle around the Sun are different quantities — that's correct physics, not a bug. Parallax keeps both honest rather than forcing them into a single, misleading picture.
 
-## Expanding the Oxlint configuration
+## Powered by real data
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+Parallax makes no simulated or mock data. Every position, rise/set time, and moon phase comes from two live APIs built and maintained by the author:
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+- **[Horizon](https://horizon-prod-lk.vercel.app)** — sun/moon rise, set, twilight, and golden-hour times for your location.
+- **[Orrery](https://orrery-dev.vercel.app)** — heliocentric planetary positions and ephemeris data.
+
+Positions refresh automatically every 60 seconds.
+
+## Tech stack
+
+- [Vite](https://vitejs.dev/) + [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) (strict)
+- [Tailwind CSS](https://tailwindcss.com/) + Radix UI primitives
+- [Vitest](https://vitest.dev/) + Testing Library for unit/component tests
+
+## Local development
+
+```bash
+npm install
+npm run dev        # start the dev server
+npx vitest run       # run the test suite (31 tests)
+npm run build       # type-check (tsc -b, strict) + production build
+npm run preview     # serve the production build locally
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Configure API endpoints via `.env`:
+
+```
+VITE_ORRERY_URL=https://orrery-dev.vercel.app
+VITE_HORIZON_URL=https://horizon-prod-lk.vercel.app
+```
