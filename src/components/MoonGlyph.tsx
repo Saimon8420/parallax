@@ -1,4 +1,4 @@
-import type { SkyTime } from "../lib/types";
+import type { MoonInfo, SkyTime } from "../lib/types";
 
 function moonTimesLine(rise: SkyTime | null, set: SkyTime | null, alwaysUp: boolean, alwaysDown: boolean) {
   if (alwaysUp) return "up all day";
@@ -6,9 +6,14 @@ function moonTimesLine(rise: SkyTime | null, set: SkyTime | null, alwaysUp: bool
   return `rise ${rise?.time24 ?? "—"} · set ${set?.time24 ?? "—"}`;
 }
 
-export function MoonGlyph({ fraction, phaseName, rise = null, set = null, alwaysUp = false, alwaysDown = false }: {
+function positionLine(position: MoonInfo["position"]) {
+  return `az ${position.azimuth.toFixed(0)}° · alt ${position.altitude.toFixed(0)}° · ${Math.round(position.distanceKm).toLocaleString()} km`;
+}
+
+export function MoonGlyph({ fraction, phaseName, rise = null, set = null, alwaysUp = false, alwaysDown = false, position }: {
   fraction: number; phaseName: string;
   rise?: SkyTime | null; set?: SkyTime | null; alwaysUp?: boolean; alwaysDown?: boolean;
+  position?: MoonInfo["position"];
 }) {
   // Simple terminator: overlay a shifted disk to reveal `fraction` of the lit face.
   // offset=0 (new moon) keeps the dark disk centered over the light one; offset=36
@@ -25,6 +30,7 @@ export function MoonGlyph({ fraction, phaseName, rise = null, set = null, always
         <div className="text-ink">{phaseName}</div>
         <div className="text-muted">{Math.round(fraction * 100)}% lit</div>
         <div className="text-muted">{moonTimesLine(rise, set, alwaysUp, alwaysDown)}</div>
+        {position && <div className="text-muted">{positionLine(position)}</div>}
       </div>
     </div>
   );

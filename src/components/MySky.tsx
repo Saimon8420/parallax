@@ -14,6 +14,7 @@ export function MySky({ overview }: { overview: SkyOverview }) {
         set={overview.moon.set}
         alwaysUp={overview.moon.alwaysUp}
         alwaysDown={overview.moon.alwaysDown}
+        position={overview.moon.position}
       />
     </section>
   );
