@@ -1,6 +1,8 @@
 export function MoonGlyph({ fraction, phaseName }: { fraction: number; phaseName: string }) {
   // Simple terminator: overlay a shifted disk to reveal `fraction` of the lit face.
-  const offset = (1 - fraction) * 20; // px within a 40px disk
+  // offset=0 (new moon) keeps the dark disk centered over the light one; offset=36
+  // (full moon, 2x radius) slides it fully clear of the 40px disk.
+  const offset = fraction * 36;
   return (
     <div className="flex items-center gap-3">
       <svg viewBox="0 0 40 40" className="h-10 w-10">
