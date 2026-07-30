@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { polarToXY, bandRadii, logRadius } from "../lib/projection";
+import { polarToXY, bandRadii, logRadius, skyPosition } from "../lib/projection";
 
 describe("polarToXY", () => {
   it("0deg points right (east) of center", () => {
@@ -33,5 +33,22 @@ describe("logRadius", () => {
     expect(a).toBeLessThan(b);
     expect(b).toBeLessThan(c);
     expect(c - b).toBeLessThan(b - a + 200); // log compression: outer gap not linear
+  });
+});
+
+describe("skyPosition", () => {
+  it("noon-ish high south sun sits near the apex, centered", () => {
+    const p = skyPosition(80, 180);
+    expect(p.visible).toBe(true);
+    expect(p.x).toBeCloseTo(100, 0);      // azimuth 180 -> center
+    expect(p.y).toBeLessThan(25);         // high altitude -> near apex
+  });
+  it("azimuth 90 maps left, 270 maps right", () => {
+    expect(skyPosition(10, 90).x).toBeCloseTo(10, 0);
+    expect(skyPosition(10, 270).x).toBeCloseTo(190, 0);
+  });
+  it("below-horizon or behind-the-observer sun is not visible", () => {
+    expect(skyPosition(-5, 180).visible).toBe(false);
+    expect(skyPosition(10, 20).visible).toBe(false); // azimuth outside [90,270] dome
   });
 });
