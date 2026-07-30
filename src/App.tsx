@@ -35,6 +35,9 @@ export default function App() {
           {loading && <p className="font-mono text-muted">computing…</p>}
           {posError && <p className="font-mono text-accent">{posError} · retrying…</p>}
           {positions && <Dial frame={frame} positions={positions} onSelect={setSelected} />}
+          {positions && frame === "helio" && positions.helio.length === 0 && (
+            <p className="font-mono text-sm text-muted">Heliocentric data unavailable</p>
+          )}
           {positions && <Clock datetime={positions.datetime} />}
         </section>
 

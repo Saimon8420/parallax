@@ -32,4 +32,40 @@ describe("MoonGlyph", () => {
     const newCx = Number(newMoon.querySelectorAll("circle")[1].getAttribute("cx"));
     expect(fullCx).toBeGreaterThan(newCx);
   });
+
+  it("renders moonrise/moonset as HH:MM from .time24 (fix #4)", () => {
+    render(
+      <MoonGlyph
+        fraction={0.5} phaseName="First Quarter"
+        rise={{ iso: "2026-07-30T20:15:00.000Z", time24: "20:15", time12: "8:15 PM" }}
+        set={{ iso: "2026-07-31T05:30:00.000Z", time24: "05:30", time12: "5:30 AM" }}
+        alwaysUp={false} alwaysDown={false}
+      />,
+    );
+    expect(screen.getByText(/20:15/)).toBeTruthy();
+    expect(screen.getByText(/05:30/)).toBeTruthy();
+  });
+
+  it("shows a dash for a null moonrise/moonset time", () => {
+    render(
+      <MoonGlyph
+        fraction={0.5} phaseName="First Quarter"
+        rise={null}
+        set={{ iso: "2026-07-31T05:30:00.000Z", time24: "05:30", time12: "5:30 AM" }}
+        alwaysUp={false} alwaysDown={false}
+      />,
+    );
+    expect(screen.getByText(/—/)).toBeTruthy();
+    expect(screen.getByText(/05:30/)).toBeTruthy();
+  });
+
+  it("says 'up all day' when alwaysUp", () => {
+    render(<MoonGlyph fraction={1} phaseName="Full Moon" alwaysUp={true} />);
+    expect(screen.getByText(/up all day/i)).toBeTruthy();
+  });
+
+  it("says 'down all day' when alwaysDown", () => {
+    render(<MoonGlyph fraction={0} phaseName="New Moon" alwaysDown={true} />);
+    expect(screen.getByText(/down all day/i)).toBeTruthy();
+  });
 });

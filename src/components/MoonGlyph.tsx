@@ -1,4 +1,15 @@
-export function MoonGlyph({ fraction, phaseName }: { fraction: number; phaseName: string }) {
+import type { SkyTime } from "../lib/types";
+
+function moonTimesLine(rise: SkyTime | null, set: SkyTime | null, alwaysUp: boolean, alwaysDown: boolean) {
+  if (alwaysUp) return "up all day";
+  if (alwaysDown) return "down all day";
+  return `rise ${rise?.time24 ?? "—"} · set ${set?.time24 ?? "—"}`;
+}
+
+export function MoonGlyph({ fraction, phaseName, rise = null, set = null, alwaysUp = false, alwaysDown = false }: {
+  fraction: number; phaseName: string;
+  rise?: SkyTime | null; set?: SkyTime | null; alwaysUp?: boolean; alwaysDown?: boolean;
+}) {
   // Simple terminator: overlay a shifted disk to reveal `fraction` of the lit face.
   // offset=0 (new moon) keeps the dark disk centered over the light one; offset=36
   // (full moon, 2x radius) slides it fully clear of the 40px disk.
@@ -13,6 +24,7 @@ export function MoonGlyph({ fraction, phaseName }: { fraction: number; phaseName
       <div className="font-mono text-sm">
         <div className="text-ink">{phaseName}</div>
         <div className="text-muted">{Math.round(fraction * 100)}% lit</div>
+        <div className="text-muted">{moonTimesLine(rise, set, alwaysUp, alwaysDown)}</div>
       </div>
     </div>
   );

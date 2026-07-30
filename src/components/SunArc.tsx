@@ -9,7 +9,7 @@ export function SunArc({ overview }: { overview: SkyOverview }) {
       <svg viewBox="0 0 200 70" className="w-full max-w-[280px]">
         <path d="M10 60 A 90 90 0 0 1 190 60" className="fill-none stroke-orbit" strokeWidth="1" />
         <line x1="10" y1="60" x2="190" y2="60" className="stroke-rule" strokeWidth="1" />
-        <circle cx="100" cy="15" r="4" className="fill-accent" />
+        <circle cx="100" cy="15" r="4" className="fill-ink" />
       </svg>
       <div className="mt-2 flex justify-between text-sm">
         <span><span className="text-muted">rise </span>{overview.sunrise.time24}</span>

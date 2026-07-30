@@ -26,8 +26,9 @@ export function Dial({ frame, positions, onSelect }: {
 
 function ringRadii(frame: Frame, p: Positions): number[] {
   if (frame === "earth") return bandRadii(p.geo.length, R_IN, R_OUT);
-  const max = Math.max(...p.helio.map((b) => b.heliocentricDistanceAu), 1);
-  return p.helio.map((b) => logRadius(b.heliocentricDistanceAu, max, R_IN, R_OUT));
+  const helio = p.helio.filter((b) => b.key !== "pluto");
+  const max = Math.max(...helio.map((b) => b.heliocentricDistanceAu), 1);
+  return helio.map((b) => logRadius(b.heliocentricDistanceAu, max, R_IN, R_OUT));
 }
 
 function earthMarks(p: Positions, onSelect: (k: BodyKey) => void) {
@@ -43,8 +44,9 @@ function earthMarks(p: Positions, onSelect: (k: BodyKey) => void) {
 }
 
 function helioMarks(p: Positions, onSelect: (k: BodyKey) => void) {
-  const max = Math.max(...p.helio.map((b) => b.heliocentricDistanceAu), 1);
-  return p.helio.map((b) => {
+  const helio = p.helio.filter((b) => b.key !== "pluto");
+  const max = Math.max(...helio.map((b) => b.heliocentricDistanceAu), 1);
+  return helio.map((b) => {
     const r = logRadius(b.heliocentricDistanceAu, max, R_IN, R_OUT);
     const { x, y } = polarToXY(C, C, r, b.heliocentricLongitude);
     return (

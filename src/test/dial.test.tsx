@@ -13,8 +13,10 @@ describe("Dial", () => {
     expect(container.querySelector("svg")).toBeTruthy();
     expect(container.querySelectorAll("[data-body]").length).toBe(p.geo.length);
   });
-  it("renders a mark per heliocentric body in helio frame", () => {
+  it("renders a mark per heliocentric body in helio frame, excluding pluto (spec §3b)", () => {
     const { container } = render(<Dial frame="helio" positions={p} onSelect={() => {}} />);
-    expect(container.querySelectorAll("[data-body]").length).toBe(p.helio.length);
+    const expected = p.helio.filter((b) => b.key !== "pluto").length;
+    expect(container.querySelectorAll("[data-body]").length).toBe(expected);
+    expect(container.querySelector('[data-body="pluto"]')).toBeNull();
   });
 });

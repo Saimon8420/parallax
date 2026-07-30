@@ -29,13 +29,23 @@ export function normalizePositions(geoJson: unknown, helioJson: unknown): Positi
   return { datetime: geoData.datetime, geo, helio };
 }
 
+/** Heliocentric endpoint is not yet deployed everywhere — best-effort only, never throws. */
+async function fetchHelioBestEffort(signal?: AbortSignal): Promise<unknown> {
+  try {
+    const res = await fetch(`${BASE}/v1/positions/heliocentric`, { signal });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchPositions(loc: Location, signal?: AbortSignal): Promise<Positions> {
   const q = `lat=${loc.lat}&lon=${loc.lng}`;
-  const [geoRes, helioRes] = await Promise.all([
+  const [geoRes, helioJson] = await Promise.all([
     fetch(`${BASE}/v1/positions?${q}`, { signal }),
-    fetch(`${BASE}/v1/positions/heliocentric`, { signal }),
+    fetchHelioBestEffort(signal),
   ]);
   if (!geoRes.ok) throw new ApiError("orrery", geoRes.status);
-  if (!helioRes.ok) throw new ApiError("orrery", helioRes.status);
-  return normalizePositions(await geoRes.json(), await helioRes.json());
+  return normalizePositions(await geoRes.json(), helioJson);
 }
