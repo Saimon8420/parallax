@@ -1,16 +1,1 @@
-{
-  "data": {
-    "datetime": "2026-07-30T00:00:00.000Z",
-    "bodies": [
-      { "body": "mercury", "heliocentricLongitude": 245.31, "heliocentricDistanceAu": 0.394 },
-      { "body": "venus", "heliocentricLongitude": 98.77, "heliocentricDistanceAu": 0.723 },
-      { "body": "earth", "heliocentricLongitude": 307.1, "heliocentricDistanceAu": 1.015 },
-      { "body": "mars", "heliocentricLongitude": 261.53, "heliocentricDistanceAu": 1.512 },
-      { "body": "jupiter", "heliocentricLongitude": 129.6, "heliocentricDistanceAu": 5.192 },
-      { "body": "saturn", "heliocentricLongitude": 13.42, "heliocentricDistanceAu": 9.531 },
-      { "body": "uranus", "heliocentricLongitude": 63.88, "heliocentricDistanceAu": 19.874 },
-      { "body": "neptune", "heliocentricLongitude": 3.91, "heliocentricDistanceAu": 30.012 },
-      { "body": "pluto", "heliocentricLongitude": 305.44, "heliocentricDistanceAu": 34.612 }
-    ]
-  }
-}
+{"data":{"datetime":"2026-07-30T07:09:17.225Z","bodies":[{"body":"mercury","heliocentricLongitude":353.3639,"heliocentricDistanceAu":0.363841},{"body":"venus","heliocentricLongitude":254.5735,"heliocentricDistanceAu":0.725951},{"body":"earth","heliocentricLongitude":307.1672,"heliocentricDistanceAu":1.015165},{"body":"mars","heliocentricLongitude":52.7227,"heliocentricDistanceAu":1.477524},{"body":"jupiter","heliocentricLongitude":126.482,"heliocentricDistanceAu":5.286267},{"body":"saturn","heliocentricLongitude":9.0353,"heliocentricDistanceAu":9.453842},{"body":"uranus","heliocentricLongitude":62.3107,"heliocentricDistanceAu":19.452412},{"body":"neptune","heliocentricLongitude":2.646,"heliocentricDistanceAu":29.880151},{"body":"pluto","heliocentricLongitude":304.2947,"heliocentricDistanceAu":35.56764}]}}
