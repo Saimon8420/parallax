@@ -1,0 +1,26 @@
+import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { SkyCalendar } from "../components/SkyCalendar";
+import calendarFixture from "./fixtures/calendar.json";
+import { normalizeCalendar } from "../lib/horizonClient";
+
+const month = normalizeCalendar(calendarFixture);
+
+describe("SkyCalendar", () => {
+  it("renders one day-number cell per day in the month", () => {
+    const { container } = render(<SkyCalendar month={month} />);
+    const dayCells = container.querySelectorAll("[data-day-number]");
+    expect(dayCells.length).toBe(month.days.length);
+    expect(month.days.length).toBe(31);
+  });
+
+  it("shows the month + year header", () => {
+    render(<SkyCalendar month={month} />);
+    expect(screen.getByText(/July 2026/)).toBeTruthy();
+  });
+
+  it("shows a known day's sunrise time", () => {
+    render(<SkyCalendar month={month} />);
+    expect(screen.getByText(/05:14/)).toBeTruthy();
+  });
+});
