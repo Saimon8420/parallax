@@ -1,0 +1,16 @@
+{
+  "data": {
+    "datetime": "2026-07-30T00:00:00.000Z",
+    "bodies": [
+      { "body": "mercury", "heliocentricLongitude": 245.31, "heliocentricDistanceAu": 0.394 },
+      { "body": "venus", "heliocentricLongitude": 98.77, "heliocentricDistanceAu": 0.723 },
+      { "body": "earth", "heliocentricLongitude": 307.1, "heliocentricDistanceAu": 1.015 },
+      { "body": "mars", "heliocentricLongitude": 261.53, "heliocentricDistanceAu": 1.512 },
+      { "body": "jupiter", "heliocentricLongitude": 129.6, "heliocentricDistanceAu": 5.192 },
+      { "body": "saturn", "heliocentricLongitude": 13.42, "heliocentricDistanceAu": 9.531 },
+      { "body": "uranus", "heliocentricLongitude": 63.88, "heliocentricDistanceAu": 19.874 },
+      { "body": "neptune", "heliocentricLongitude": 3.91, "heliocentricDistanceAu": 30.012 },
+      { "body": "pluto", "heliocentricLongitude": 305.44, "heliocentricDistanceAu": 34.612 }
+    ]
+  }
+}
