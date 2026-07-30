@@ -32,6 +32,7 @@ export interface MoonInfo {
   alwaysDown: boolean;
   illuminationFraction: number;
   phaseName: string;
+  position: { azimuth: number; altitude: number; distanceKm: number };
 }
 export interface SkyOverview {
   sunrise: SkyTime | null;
@@ -42,5 +43,21 @@ export interface SkyOverview {
   civilDusk: SkyTime | null;
   dayLength: { seconds: number; formatted: string } | null;
   moon: MoonInfo;
+  twilight: {
+    civilDawn: SkyTime | null;
+    civilDusk: SkyTime | null;
+    nauticalDawn: SkyTime | null;
+    nauticalDusk: SkyTime | null;
+    astroDawn: SkyTime | null;
+    astroDusk: SkyTime | null;
+  };
 }
 export interface Location { lat: number; lng: number; label: string; }
+
+export interface SunPosition { azimuth: number; altitude: number; isUp: boolean; time: SkyTime }
+export interface MoonPhaseEvent { phase: string; utcISO: string; dateLabel: string }
+export interface CalendarDay {
+  date: string; sunrise: SkyTime | null; sunset: SkyTime | null; solarNoon: SkyTime | null;
+  goldenHourEvening: SkyTime | null; dayLength: string | null; moonPhase: string; moonIllumination: number;
+}
+export interface CalendarMonth { year: number; month: number; days: CalendarDay[] }
