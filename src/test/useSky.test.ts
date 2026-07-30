@@ -3,11 +3,24 @@ import { renderHook, waitFor } from "@testing-library/react";
 import positions from "./fixtures/positions.json";
 import helio from "./fixtures/heliocentric.json";
 import overview from "./fixtures/overview.json";
+import sunPositionFixture from "./fixtures/sun-position.json";
+import moonPhasesFixture from "./fixtures/moon-phases.json";
+import calendarFixture from "./fixtures/calendar.json";
 import { useSky } from "../lib/useSky";
 
 beforeEach(() => {
   vi.stubGlobal("fetch", vi.fn((url: string) => {
-    const body = url.includes("heliocentric") ? helio : url.includes("overview") ? overview : positions;
+    const body = url.includes("heliocentric")
+      ? helio
+      : url.includes("overview")
+        ? overview
+        : url.includes("sun/position")
+          ? sunPositionFixture
+          : url.includes("moon/phases")
+            ? moonPhasesFixture
+            : url.includes("calendar/monthly")
+              ? calendarFixture
+              : positions;
     return Promise.resolve({ ok: true, json: () => Promise.resolve(body) } as Response);
   }));
 });
@@ -18,6 +31,41 @@ describe("useSky", () => {
     await waitFor(() => expect(result.current.positions).not.toBeNull());
     expect(result.current.overview).not.toBeNull();
     expect(result.current.positions!.geo.length).toBeGreaterThan(0);
+  });
+
+  it("loads sun position, moon phases, and calendar for a location", async () => {
+    const { result } = renderHook(() => useSky({ lat: 23.81, lng: 90.41, label: "Dhaka" }));
+    await waitFor(() => expect(result.current.sunPosition).not.toBeNull());
+    expect(result.current.moonPhases).not.toBeNull();
+    expect(result.current.moonPhases!.length).toBeGreaterThan(0);
+    expect(result.current.calendar).not.toBeNull();
+    expect(result.current.calendar!.days.length).toBeGreaterThan(0);
+  });
+
+  it("a failing sun position fetch does not blank positions/overview/moonPhases/calendar (independent failure)", async () => {
+    vi.stubGlobal("fetch", vi.fn((url: string) => {
+      if (url.includes("sun/position")) {
+        return Promise.resolve({ ok: false, status: 500, json: () => Promise.resolve({}) } as Response);
+      }
+      const body = url.includes("heliocentric")
+        ? helio
+        : url.includes("overview")
+          ? overview
+          : url.includes("moon/phases")
+            ? moonPhasesFixture
+            : url.includes("calendar/monthly")
+              ? calendarFixture
+              : positions;
+      return Promise.resolve({ ok: true, json: () => Promise.resolve(body) } as Response);
+    }));
+
+    const { result } = renderHook(() => useSky({ lat: 23.81, lng: 90.41, label: "Dhaka" }));
+    await waitFor(() => expect(result.current.positions).not.toBeNull());
+    expect(result.current.overview).not.toBeNull();
+    await waitFor(() => expect(result.current.moonPhases).not.toBeNull());
+    expect(result.current.calendar).not.toBeNull();
+    expect(result.current.sunPosition).toBeNull();
+    expect(result.current.sunPositionError).not.toBeNull();
   });
 
   it("ignores a stale in-flight response after the location changes (alive guard)", async () => {

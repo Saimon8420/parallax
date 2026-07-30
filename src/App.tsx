@@ -9,12 +9,19 @@ import { MySky } from "./components/MySky";
 import { LocationBar } from "./components/LocationBar";
 import { BodyDetail } from "./components/BodyDetail";
 import { Clock } from "./components/Clock";
+import { MoonPhases } from "./components/MoonPhases";
+import { SkyCalendar } from "./components/SkyCalendar";
 
 export default function App() {
   const [loc, setLoc] = useState<Location>(() => loadLocation() ?? DEFAULT_LOCATION);
   const [frame, setFrame] = useState<Frame>("earth");
   const [selected, setSelected] = useState<BodyKey | null>(null);
-  const { positions, overview, posError, skyError, loading } = useSky(loc);
+  const {
+    positions, overview, posError, skyError, loading,
+    sunPosition, sunPositionError,
+    moonPhases, moonPhasesError,
+    calendar, calendarError,
+  } = useSky(loc);
 
   const pick = (l: Location) => { setLoc(l); saveLocation(l); };
   const selectedBody = positions?.geo.find((b) => b.key === selected) ?? null;
@@ -43,8 +50,24 @@ export default function App() {
 
         <div className="flex flex-col gap-6">
           {skyError && <p className="font-mono text-accent">{skyError}</p>}
-          {overview && <MySky overview={overview} />}
+          {overview && <MySky overview={overview} sunPosition={sunPosition} />}
+          {sunPositionError && !sunPosition && (
+            <p className="font-mono text-xs text-muted">live sun position unavailable</p>
+          )}
           <BodyDetail body={selectedBody} onClose={() => setSelected(null)} />
+
+          <section className="flex flex-col gap-2 border border-rule p-5">
+            <h2 className="font-mono text-xs uppercase tracking-widest text-muted">Upcoming moon phases</h2>
+            {moonPhases && moonPhases.length > 0 && <MoonPhases phases={moonPhases} now={new Date()} />}
+            {moonPhasesError && !moonPhases && (
+              <p className="font-mono text-xs text-muted">moon phases unavailable</p>
+            )}
+          </section>
+
+          {calendar && <SkyCalendar month={calendar} />}
+          {calendarError && !calendar && (
+            <p className="font-mono text-xs text-muted">calendar unavailable</p>
+          )}
         </div>
       </div>
     </main>
