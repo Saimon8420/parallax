@@ -21,6 +21,39 @@ describe("MySky", () => {
     render(<MySky overview={{ ...o, sunrise: null, sunset: null }} />);
     expect(screen.getByText(/no sunrise|sun (up|down) all day/i)).toBeTruthy();
   });
+
+  it("shows the day length", () => {
+    render(<MySky overview={o} />);
+    if (o.dayLength) expect(screen.getByText(new RegExp(o.dayLength.formatted))).toBeTruthy();
+  });
+
+  it("shows first light and last light from astronomical twilight", () => {
+    render(<MySky overview={o} />);
+    expect(screen.getByText(/first light/i)).toBeTruthy();
+    expect(screen.getByText(/last light/i)).toBeTruthy();
+    if (o.twilight.astroDawn) expect(screen.getAllByText(new RegExp(o.twilight.astroDawn.time24)).length).toBeGreaterThan(0);
+    if (o.twilight.astroDusk) expect(screen.getAllByText(new RegExp(o.twilight.astroDusk.time24)).length).toBeGreaterThan(0);
+  });
+
+  it("labels all three twilight tiers", () => {
+    render(<MySky overview={o} />);
+    expect(screen.getByText(/civil/i)).toBeTruthy();
+    expect(screen.getByText(/nautical/i)).toBeTruthy();
+    expect(screen.getByText(/astro/i)).toBeTruthy();
+  });
+
+  it("guards null twilight values with an em dash instead of crashing", () => {
+    render(
+      <MySky
+        overview={{
+          ...o,
+          twilight: { civilDawn: null, civilDusk: null, nauticalDawn: null, nauticalDusk: null, astroDawn: null, astroDusk: null },
+          dayLength: null,
+        }}
+      />,
+    );
+    expect(screen.getAllByText(/—/).length).toBeGreaterThan(0);
+  });
 });
 
 describe("MoonGlyph", () => {

@@ -1,4 +1,4 @@
-import type { SkyOverview, SunPosition } from "../lib/types";
+import type { SkyOverview, SkyTime, SunPosition } from "../lib/types";
 import { skyPosition } from "../lib/projection";
 
 export function SunArc({ overview, sunPosition }: { overview: SkyOverview; sunPosition?: SunPosition }) {
@@ -49,6 +49,30 @@ export function SunArc({ overview, sunPosition }: { overview: SkyOverview; sunPo
           {sunPosition.isUp ? "up" : "below horizon"}
         </p>
       )}
+      <div className="mt-2 flex flex-col gap-0.5 text-xs text-muted">
+        <p>
+          <span className="text-muted">civil </span>
+          {timeOr(overview.twilight.civilDawn)}–{timeOr(overview.twilight.civilDusk)}
+        </p>
+        <p>
+          <span className="text-muted">nautical </span>
+          {timeOr(overview.twilight.nauticalDawn)}–{timeOr(overview.twilight.nauticalDusk)}
+        </p>
+        <p>
+          <span className="text-muted">astro </span>
+          {timeOr(overview.twilight.astroDawn)}–{timeOr(overview.twilight.astroDusk)}
+        </p>
+      </div>
+      <p className="mt-1 text-xs text-muted">
+        day length {overview.dayLength ? overview.dayLength.formatted : "—"}
+      </p>
+      <p className="mt-1 text-xs text-muted">
+        first light {timeOr(overview.twilight.astroDawn)} · last light {timeOr(overview.twilight.astroDusk)}
+      </p>
     </div>
   );
+}
+
+function timeOr(time: SkyTime | null): string {
+  return time ? time.time24 : "—";
 }
