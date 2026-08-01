@@ -8,27 +8,30 @@ export function LocationBar({ current, onPick }: { current: Location; onPick: (l
   const [q, setQ] = useState("");
   const results = searchCities(q);
   return (
-    <div className="flex items-center gap-3 font-mono text-sm">
-      <span className="text-accent">◉</span>
-      <span className="text-ink">{current.label}</span>
+    <div className="flex items-center gap-2 font-mono text-[13px]">
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" className="text-muted">change location</Button>
+          <button
+            aria-label="change location"
+            className="flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-ink backdrop-blur-sm transition hover:border-white/30">
+            <span className="text-accent">◉</span>
+            {current.label}
+          </button>
         </PopoverTrigger>
-        <PopoverContent className="w-64 space-y-2">
+        <PopoverContent className="w-64 space-y-2 border-rule bg-card">
           <input autoFocus placeholder="Search city…" value={q}
             onChange={(e) => setQ(e.target.value)}
-            className="w-full bg-ground border border-rule px-2 py-1 text-ink" />
+            className="w-full rounded-md border border-rule bg-ground px-2 py-1.5 text-ink outline-none focus:border-accent" />
           <ul>
             {results.map((c) => (
               <li key={c.label}>
-                <button className="w-full text-left py-1 hover:text-accent" onClick={() => onPick(c)}>
+                <button className="w-full rounded px-1 py-1 text-left hover:text-accent" onClick={() => onPick(c)}>
                   {c.label}
                 </button>
               </li>
             ))}
           </ul>
-          <Button variant="ghost" className="text-muted"
+          <Button variant="ghost" className="w-full justify-start text-muted"
             onClick={() => geolocate().then(onPick).catch(() => {})}>
             use my location
           </Button>

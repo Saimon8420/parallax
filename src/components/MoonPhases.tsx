@@ -2,6 +2,10 @@ import type { MoonPhaseEvent } from "../lib/types";
 
 const DAY_MS = 86400000;
 
+const GLYPH: Record<string, string> = {
+  "New Moon": "🌑", "First Quarter": "🌓", "Full Moon": "🌕", "Last Quarter": "🌗",
+};
+
 // YYYY-MM-DD in UTC, matching how MoonPhaseEvent.dateLabel is produced by the API.
 function utcDate(d: Date): string {
   return d.toISOString().slice(0, 10);
@@ -15,15 +19,17 @@ function daysUntilLabel(event: MoonPhaseEvent, now: Date) {
 
 export function MoonPhases({ phases, now }: { phases: MoonPhaseEvent[]; now: Date }) {
   return (
-    <div className="font-mono text-sm">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
       {phases.map((p) => {
         const label = daysUntilLabel(p, now);
         const isToday = label === "today";
         return (
-          <div key={`${p.phase}-${p.utcISO}`} className="flex items-center justify-between gap-3 py-1">
-            <span className={isToday ? "text-accent" : "text-ink"}>{p.phase}</span>
-            <span className="text-muted">{p.dateLabel}</span>
-            <span className={isToday ? "text-accent" : "text-muted"}>{label}</span>
+          <div key={`${p.phase}-${p.utcISO}`}
+            className={`rounded-xl border p-4 ${isToday ? "border-accent/60 bg-accent/[0.06]" : "border-rule bg-card/50"}`}>
+            <div className="text-2xl leading-none">{GLYPH[p.phase] ?? "🌙"}</div>
+            <div className={`mt-2 text-sm font-bold ${isToday ? "text-accent" : "text-ink"}`}>{p.phase}</div>
+            <div className="mt-1 font-mono text-[11.5px] text-muted">{p.dateLabel}</div>
+            <div className={`font-mono text-[11.5px] ${isToday ? "text-accent" : "text-muted"}`}>{label}</div>
           </div>
         );
       })}

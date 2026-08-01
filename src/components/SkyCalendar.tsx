@@ -28,7 +28,7 @@ function MiniMoon({ fraction }: { fraction: number }) {
 
 function DayCell({ day }: { day: CalendarDay }) {
   return (
-    <div className="flex flex-col gap-1 border border-rule p-1.5 text-left" data-day-number={dayOfMonth(day.date)}>
+    <div className="flex flex-col gap-1 rounded-md border border-rule bg-card/40 p-1.5 text-left" data-day-number={dayOfMonth(day.date)}>
       <div className="flex items-center justify-between">
         <span className="font-mono text-xs text-ink">{dayOfMonth(day.date)}</span>
         <MiniMoon fraction={day.moonIllumination} />
@@ -46,13 +46,14 @@ export function SkyCalendar({ month }: { month: CalendarMonth }) {
   const blanks = month.days.length > 0 ? leadingBlankCount(month.days[0]!.date) : 0;
 
   return (
-    <details className="border border-rule p-3">
-      <summary className="cursor-pointer font-mono text-sm text-muted">Monthly calendar</summary>
-      <div className="mt-3">
-        <div className="mb-2 font-mono text-sm text-ink">{monthLabel}</div>
+    <details className="group rounded-2xl border border-rule bg-card/40 p-4 backdrop-blur-sm">
+      <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
+        <span className="transition group-open:rotate-90">▸</span> {monthLabel} · sunrise ↑ · sunset ↓ · moon
+      </summary>
+      <div className="mt-4">
         <div className="grid grid-cols-7 gap-1">
           {WEEKDAY_LABELS.map((label) => (
-            <div key={label} className="font-mono text-[10px] text-muted">{label}</div>
+            <div key={label} className="pb-1 font-mono text-[10px] text-faint">{label}</div>
           ))}
           {Array.from({ length: blanks }).map((_, i) => (
             <div key={`blank-${i}`} />

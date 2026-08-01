@@ -14,9 +14,9 @@ export function BodyDetail({ body, onClose }: { body: GeoBody | null; onClose: (
       : []),
   ];
   return (
-    <aside className="border border-rule p-5 font-mono">
+    <aside className="rounded-2xl border border-rule bg-card/60 p-5 font-mono backdrop-blur-sm">
       <div className="flex items-center justify-between">
-        <h3 className="font-display text-lg uppercase">{BODY_META[body.key].label}</h3>
+        <h3 className="font-display text-lg uppercase text-ink">{BODY_META[body.key].label}</h3>
         <button onClick={onClose} className="text-muted hover:text-accent">close ✕</button>
       </div>
       <dl className="mt-3 grid grid-cols-2 gap-y-1 text-sm">
