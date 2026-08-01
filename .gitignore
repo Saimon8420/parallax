@@ -27,3 +27,5 @@ dist-ssr
 # SDD workspace / spec docs — never commit
 docs/superpowers/
 .superpowers/
+
+.vercel
