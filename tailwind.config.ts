@@ -5,8 +5,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        ground: "#0c0c0c", ink: "#f4f4f2", muted: "#8f8f8f",
-        accent: "#e0532f", rule: "#262626", orbit: "#3a3a3a",
+        // "Horizon Line" palette — deep night ground, a warm sun accent, a cool moon.
+        ground: "#05070f", ink: "#eef1f7", muted: "#9aa3b6", faint: "#6b7488",
+        accent: "#ff7a45", moon: "#cdd7ee", rule: "#1b2233", orbit: "#2a3346",
+        card: "#0c1322",
       },
       fontFamily: {
         display: ['"Space Grotesk"', "system-ui", "sans-serif"],

@@ -3,10 +3,19 @@
 :root { color-scheme: dark; }
 svg [data-body] { transition: opacity .35s ease; }
 body {
-  margin: 0; background-color: #0c0c0c; color: #f4f4f2;
+  margin: 0; background-color: #05070f; color: #eef1f7;
   font-family: "Space Grotesk", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+/* faint starfield used behind the sky hero */
+.starfield {
   background-image:
-    linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
-  background-size: 44px 44px;
+    radial-gradient(1px 1px at 20% 30%, #fff, transparent),
+    radial-gradient(1px 1px at 62% 18%, #fff, transparent),
+    radial-gradient(1px 1px at 82% 40%, #dfefff, transparent),
+    radial-gradient(1px 1px at 35% 12%, #fff, transparent),
+    radial-gradient(1px 1px at 8% 22%, #fff, transparent),
+    radial-gradient(1px 1px at 50% 8%, #fff, transparent),
+    radial-gradient(1px 1px at 73% 26%, #fff, transparent),
+    radial-gradient(1px 1px at 90% 14%, #eef, transparent);
 }
