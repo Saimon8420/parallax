@@ -21,7 +21,9 @@ export function useSky(loc: Location) {
     const ac = new AbortController();
     let alive = true;
     const loadLive = () => {
-      // Positions and sun position are both "right now" readings — refresh together.
+      // Positions, sun position and overview (for the live Moon position) are all
+      // "right now" readings — refresh together. Overview keeps the last good value
+      // on a failed refresh so the page never blanks.
       setPosError(null);
       fetchPositions(loc, ac.signal)
         .then((p) => alive && setPositions(p))
@@ -30,6 +32,9 @@ export function useSky(loc: Location) {
       fetchSunPosition(loc, ac.signal)
         .then((sp) => alive && setSunPosition(sp))
         .catch(() => alive && setSunPositionError("sun position signal lost"));
+      fetchOverview(loc, ac.signal)
+        .then((o) => alive && setOverview(o))
+        .catch(() => {/* keep last good overview */});
     };
     setLoading(true);
     Promise.all([
