@@ -19,8 +19,8 @@ describe("SkyCalendar", () => {
     expect(screen.getByText(/July 2026/)).toBeTruthy();
   });
 
-  it("shows a known day's sunrise time", () => {
+  it("shows a known day's sunrise time (in both the mobile list and the desktop grid)", () => {
     render(<SkyCalendar month={month} />);
-    expect(screen.getByText(/05:14/)).toBeTruthy();
+    expect(screen.getAllByText(/05:14/).length).toBeGreaterThan(0);
   });
 });
