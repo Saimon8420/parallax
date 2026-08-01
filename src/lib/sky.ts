@@ -1,4 +1,4 @@
-import type { SkyOverview, SunPosition } from "./types";
+import type { SkyOverview, SkyTime, SunPosition } from "./types";
 
 /** A run of lede text; `b` marks a value to emphasise. */
 export interface Segment { t: string; b?: boolean }
@@ -135,4 +135,47 @@ function moonSentence(overview: SkyOverview): Segment[] {
 /** Join segments into plain text (for a11y / tests). */
 export function segmentText(segments: Segment[]): string {
   return segments.map((s) => s.t).join("");
+}
+
+/**
+ * Project altitude/azimuth onto a top-down sky radar centred at (cx,cy) with
+ * horizon at radius R. North is up, bearing increases clockwise; the zenith
+ * (90° altitude) sits at the centre, the horizon (0°) at the edge.
+ */
+export function compassRadar(cx: number, cy: number, R: number, altitudeDeg: number, azimuthDeg: number): { x: number; y: number } {
+  const alt = Math.max(0, Math.min(90, altitudeDeg));
+  const r = R * (1 - alt / 90);
+  const a = ((azimuthDeg - 90) * Math.PI) / 180; // azimuth 0°=N → straight up
+  return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+}
+
+/** Which body the live tracker should follow right now, and its state. */
+export type ActiveBody =
+  | { kind: "sun"; altitude: number; azimuth: number }
+  | { kind: "moon"; altitude: number; azimuth: number; illumination: number; phaseName: string }
+  | { kind: "next"; body: "sun" | "moon"; risesAt: SkyTime }
+  | { kind: "rest" };
+
+/** Sun by day, Moon by night; when both are down, the next body to rise. */
+export function activeSkyBody(overview: SkyOverview, sun: SunPosition | null | undefined, now: Date): ActiveBody {
+  if (sun && sun.isUp) return { kind: "sun", altitude: sun.altitude, azimuth: sun.azimuth };
+
+  const m = overview.moon;
+  if (m.alwaysUp || m.position.altitude > 0) {
+    return {
+      kind: "moon",
+      altitude: Math.max(m.position.altitude, 0),
+      azimuth: m.position.azimuth,
+      illumination: m.illuminationFraction,
+      phaseName: m.phaseName,
+    };
+  }
+
+  const nowMs = now.getTime();
+  const cands: { body: "sun" | "moon"; t: SkyTime }[] = [];
+  if (overview.sunrise && Date.parse(overview.sunrise.iso) > nowMs) cands.push({ body: "sun", t: overview.sunrise });
+  if (m.rise && Date.parse(m.rise.iso) > nowMs) cands.push({ body: "moon", t: m.rise });
+  if (cands.length === 0) return { kind: "rest" };
+  cands.sort((a, b) => Date.parse(a.t.iso) - Date.parse(b.t.iso));
+  return { kind: "next", body: cands[0]!.body, risesAt: cands[0]!.t };
 }
