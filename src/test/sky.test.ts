@@ -100,6 +100,30 @@ describe("compassRadar", () => {
   });
 });
 
+describe("sky.ts — Bengali", () => {
+  it("names compass points in Bengali", () => {
+    expect(compassName(0, "bn")).toBe("উত্তর");
+    expect(compassName(282, "bn")).toBe("পশ্চিম-উত্তরপশ্চিম");
+  });
+  it("formats humanUntil with Bengali words and numerals", () => {
+    const now = new Date("2026-08-01T12:00:00Z");
+    expect(humanUntil("2026-08-01T13:29:00Z", now, "bn")).toBe("১ ঘন্টা ২৯ মিনিট");
+    expect(humanUntil("2026-08-01T12:25:00Z", now, "bn")).toBe("২৫ মিনিট");
+  });
+  it("builds a Bengali sun sentence with Bengali numerals and compass", () => {
+    const { sun } = describeSky(o, sunAt(19, 282, true), new Date("2026-08-01T11:12:00Z"), "bn");
+    const text = segmentText(sun);
+    expect(text).toContain("সূর্য");
+    expect(text).toContain("১৯°");
+    expect(text).toContain("পশ্চিম-উত্তরপশ্চিম");
+  });
+  it("builds a Bengali moon sentence", () => {
+    const { moon } = describeSky(o, sunAt(19, 282, true), new Date("2026-08-01T11:12:00Z"), "bn");
+    expect(segmentText(moon)).toContain("চাঁদ");
+    expect(segmentText(moon)).toContain("আলোকিত");
+  });
+});
+
 describe("activeSkyBody", () => {
   const sunUp = { altitude: 34, azimuth: 258, isUp: true, time: o.sunset! } as const;
   it("tracks the Sun when it is up", () => {

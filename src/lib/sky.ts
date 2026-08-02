@@ -1,32 +1,23 @@
 import type { SkyOverview, SkyTime, SunPosition } from "./types";
+import type { Lang } from "../i18n/types";
+import { DICT } from "../i18n/dict";
+import { localizeDigits } from "../i18n/localizeDigits";
 
 /** A run of lede text; `b` marks a value to emphasise. */
 export interface Segment { t: string; b?: boolean }
-
-const COMPASS_16 = [
-  "north", "north-northeast", "northeast", "east-northeast",
-  "east", "east-southeast", "southeast", "south-southeast",
-  "south", "south-southwest", "southwest", "west-southwest",
-  "west", "west-northwest", "northwest", "north-northwest",
-];
-
-const COMPASS_ABBR = [
-  "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
-  "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW",
-];
 
 function compassIndex(azimuthDeg: number): number {
   return Math.round((((azimuthDeg % 360) + 360) % 360) / 22.5) % 16;
 }
 
 /** Azimuth (° clockwise from true north) → spoken 16-point compass name. */
-export function compassName(azimuthDeg: number): string {
-  return COMPASS_16[compassIndex(azimuthDeg)]!;
+export function compassName(azimuthDeg: number, lang: Lang = "en"): string {
+  return DICT[lang].compass[compassIndex(azimuthDeg)]!;
 }
 
 /** Azimuth → abbreviated compass point, e.g. 282 → "WNW". */
-export function compassAbbr(azimuthDeg: number): string {
-  return COMPASS_ABBR[compassIndex(azimuthDeg)]!;
+export function compassAbbr(azimuthDeg: number, lang: Lang = "en"): string {
+  return DICT[lang].compassAbbr[compassIndex(azimuthDeg)]!;
 }
 
 export type SkyTier = "day" | "golden" | "night";
@@ -66,19 +57,28 @@ export function skyPlot(altitudeDeg: number, azimuthDeg: number): { leftPct: num
   return { leftPct, topPct };
 }
 
-/** "1h 29m" until `targetISO`, or null if it is already past `now`. */
-export function humanUntil(targetISO: string | null | undefined, now: Date): string | null {
+/** "1h 29m" / "১ ঘন্টা ২৯ মিনিট" until `targetISO`, or null if already past. */
+export function humanUntil(targetISO: string | null | undefined, now: Date, lang: Lang = "en"): string | null {
   if (!targetISO) return null;
   const diff = Date.parse(targetISO) - now.getTime();
   if (!Number.isFinite(diff) || diff <= 0) return null;
   let h = Math.floor(diff / 3_600_000);
   let m = Math.round((diff % 3_600_000) / 60_000);
   if (m === 60) { h += 1; m = 0; }
+  if (lang === "bn") {
+    const u = DICT.bn.units;
+    const hh = `${localizeDigits(h, "bn")} ${u.hourLong}`;
+    const mm = `${localizeDigits(m, "bn")} ${u.minuteLong}`;
+    return h > 0 ? `${hh} ${mm}` : mm;
+  }
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
 
-function pct(fraction: number): string {
-  return `${Math.round(fraction * 100)}%`;
+function num(n: number, lang: Lang): string {
+  return localizeDigits(Math.round(n), lang);
+}
+function pct(fraction: number, lang: Lang): string {
+  return `${localizeDigits(Math.round(fraction * 100), lang)}%`;
 }
 
 /** Plain-language description of the sky right now, as emphasised segments. */
@@ -86,48 +86,83 @@ export function describeSky(
   overview: SkyOverview,
   sunPosition: SunPosition | null | undefined,
   now: Date,
+  lang: Lang = "en",
 ): { sun: Segment[]; moon: Segment[] } {
-  return { sun: sunSentence(overview, sunPosition, now), moon: moonSentence(overview) };
+  return { sun: sunSentence(overview, sunPosition, now, lang), moon: moonSentence(overview, lang) };
 }
 
-function sunSentence(overview: SkyOverview, sun: SunPosition | null | undefined, now: Date): Segment[] {
+function sunSentence(overview: SkyOverview, sun: SunPosition | null | undefined, now: Date, lang: Lang): Segment[] {
+  const t24 = (t: SkyTime) => localizeDigits(t.time24, lang);
   if (sun && sun.isUp) {
-    const until = humanUntil(overview.sunset?.iso, now);
+    const until = humanUntil(overview.sunset?.iso, now, lang);
+    if (lang === "bn") {
+      const seg: Segment[] = [
+        { t: "সূর্য এখন " },
+        { t: compassName(sun.azimuth, lang), b: true },
+        { t: " আকাশে " },
+        { t: `${num(sun.altitude, lang)}°`, b: true },
+        { t: " উঁচুতে" },
+      ];
+      if (until) seg.push({ t: ", " }, { t: until, b: true }, { t: " পর অস্ত যাবে।" });
+      else if (overview.sunset) seg.push({ t: ", অস্ত যাবে " }, { t: t24(overview.sunset), b: true }, { t: "-এ।" });
+      else seg.push({ t: "।" });
+      return seg;
+    }
     const seg: Segment[] = [
       { t: "The Sun hangs " },
-      { t: `${Math.round(sun.altitude)}°`, b: true },
+      { t: `${num(sun.altitude, lang)}°`, b: true },
       { t: " over the " },
-      { t: compassName(sun.azimuth), b: true },
+      { t: compassName(sun.azimuth, lang), b: true },
     ];
     if (until) seg.push({ t: ", setting in " }, { t: until, b: true }, { t: "." });
-    else if (overview.sunset) seg.push({ t: ", setting at " }, { t: overview.sunset.time24, b: true }, { t: "." });
+    else if (overview.sunset) seg.push({ t: ", setting at " }, { t: t24(overview.sunset), b: true }, { t: "." });
     else seg.push({ t: "." });
     return seg;
   }
   // Sun is down: before sunrise vs after sunset.
   if (overview.sunrise && now.getTime() < Date.parse(overview.sunrise.iso)) {
-    return [{ t: "The Sun is below the horizon — it rises at " }, { t: overview.sunrise.time24, b: true }, { t: "." }];
+    return lang === "bn"
+      ? [{ t: "সূর্য দিগন্তের নিচে — উঠবে " }, { t: t24(overview.sunrise), b: true }, { t: "-এ।" }]
+      : [{ t: "The Sun is below the horizon — it rises at " }, { t: t24(overview.sunrise), b: true }, { t: "." }];
   }
   if (overview.sunset) {
-    return [{ t: "The Sun set at " }, { t: overview.sunset.time24, b: true }, { t: " — it’s night." }];
+    return lang === "bn"
+      ? [{ t: "সূর্য " }, { t: t24(overview.sunset), b: true }, { t: "-এ অস্ত গেছে — এখন রাত।" }]
+      : [{ t: "The Sun set at " }, { t: t24(overview.sunset), b: true }, { t: " — it’s night." }];
   }
-  return [{ t: "The Sun is below the horizon." }];
+  return lang === "bn" ? [{ t: "সূর্য দিগন্তের নিচে।" }] : [{ t: "The Sun is below the horizon." }];
 }
 
-function moonSentence(overview: SkyOverview): Segment[] {
+function moonSentence(overview: SkyOverview, lang: Lang): Segment[] {
   const m = overview.moon;
-  const desc = `${pct(m.illuminationFraction)}-lit ${m.phaseName.toLowerCase()}`;
+  const phase = DICT[lang].moonPhases[m.phaseName] ?? m.phaseName;
+  const t24 = (t: SkyTime) => localizeDigits(t.time24, lang);
+  if (lang === "bn") {
+    const desc = `${pct(m.illuminationFraction, lang)}-আলোকিত ${phase}`;
+    if (m.alwaysUp) return [{ t: "একটি " }, { t: desc, b: true }, { t: " চাঁদ সারা রাত আকাশে।" }];
+    if (m.alwaysDown) return [{ t: "একটি " }, { t: desc, b: true }, { t: " চাঁদ দিগন্তের নিচেই থাকে।" }];
+    if (m.position.altitude > 0) {
+      const seg: Segment[] = [{ t: "একটি " }, { t: desc, b: true }, { t: " চাঁদ আকাশে" }];
+      if (m.set) seg.push({ t: ", অস্ত যাবে " }, { t: t24(m.set), b: true }, { t: "-এ" });
+      seg.push({ t: "।" });
+      return seg;
+    }
+    const seg: Segment[] = [{ t: "একটি " }, { t: desc, b: true }, { t: " চাঁদ এখনও দিগন্তের নিচে" }];
+    if (m.rise) seg.push({ t: " — উঠবে " }, { t: t24(m.rise), b: true }, { t: "-এ" });
+    seg.push({ t: "।" });
+    return seg;
+  }
+  const desc = `${pct(m.illuminationFraction, lang)}-lit ${phase.toLowerCase()}`;
   if (m.alwaysUp) return [{ t: "A " }, { t: desc, b: true }, { t: " Moon is up all night." }];
   if (m.alwaysDown) return [{ t: "A " }, { t: desc, b: true }, { t: " Moon stays below the horizon." }];
-  const up = m.position.altitude > 0;
-  if (up) {
+  if (m.position.altitude > 0) {
     const seg: Segment[] = [{ t: "A " }, { t: desc, b: true }, { t: " Moon is up" }];
-    if (m.set) seg.push({ t: ", setting at " }, { t: m.set.time24, b: true });
+    if (m.set) seg.push({ t: ", setting at " }, { t: t24(m.set), b: true });
     seg.push({ t: "." });
     return seg;
   }
   const seg: Segment[] = [{ t: "The " }, { t: desc, b: true }, { t: " Moon is still below the horizon" }];
-  if (m.rise) seg.push({ t: " — it rises at " }, { t: m.rise.time24, b: true });
+  if (m.rise) seg.push({ t: " — it rises at " }, { t: t24(m.rise), b: true });
   seg.push({ t: "." });
   return seg;
 }
