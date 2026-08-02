@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { localizeDigits } from "../i18n/localizeDigits";
+import { DICT } from "../i18n/dict";
+import { inTime, localizeDayLength } from "../i18n/format";
 
 describe("localizeDigits", () => {
   it("maps ASCII digits to Bengali numerals in bn", () => {
@@ -11,5 +13,32 @@ describe("localizeDigits", () => {
   it("leaves non-digits and English untouched", () => {
     expect(localizeDigits("05:14", "en")).toBe("05:14");
     expect(localizeDigits("in 44m", "bn")).toBe("in ৪৪m"); // only digits change
+  });
+});
+
+describe("dictionaries", () => {
+  it("has 16 compass points, 7 weekdays, 12 months in both languages", () => {
+    for (const lang of ["en", "bn"] as const) {
+      expect(DICT[lang].compass).toHaveLength(16);
+      expect(DICT[lang].compassAbbr).toHaveLength(16);
+      expect(DICT[lang].weekdays).toHaveLength(7);
+      expect(DICT[lang].months).toHaveLength(12);
+    }
+  });
+  it("translates representative keys to Bengali", () => {
+    expect(DICT.bn.compass[0]).toBe("উত্তর");
+    expect(DICT.bn.bodies.sun).toBe("সূর্য");
+    expect(DICT.bn.moonPhases["Full Moon"]).toBe("পূর্ণিমা");
+  });
+});
+
+describe("format helpers", () => {
+  it("inTime", () => {
+    expect(inTime("44m", "en")).toBe("in 44m");
+    expect(inTime("৪৪ মিনিট", "bn")).toBe("৪৪ মিনিট পর");
+  });
+  it("localizeDayLength", () => {
+    expect(localizeDayLength("13h 13m", "en")).toBe("13h 13m");
+    expect(localizeDayLength("13h 13m", "bn")).toBe("১৩ ঘ ১৩ মি");
   });
 });
