@@ -15,7 +15,7 @@ export function LocationBar({ current, onPick }: { current: Location; onPick: (l
         <PopoverTrigger asChild>
           <button
             aria-label={t.location.change}
-            className="flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-1.5 text-ink backdrop-blur-sm transition hover:border-white/30">
+            className="flex h-9 items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 text-ink backdrop-blur-sm transition hover:border-white/30">
             <span className="text-accent">◉</span>
             {current.label}
           </button>

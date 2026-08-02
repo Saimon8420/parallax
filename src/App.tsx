@@ -52,9 +52,9 @@ export default function App() {
   const pick = (l: Location) => { setLoc(l); saveLocation(l); };
   const selectedBody = positions?.geo.find((b) => b.key === selected) ?? null;
   const header = (
-    <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
       <Brand />
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center justify-end gap-2">
         <LanguageSwitcher />
         <LocationBar current={loc} onPick={pick} />
       </div>

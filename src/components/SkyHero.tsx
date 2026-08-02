@@ -44,7 +44,7 @@ export function SkyHero({ overview, sunPosition, header, now }: {
       {/* content over the sky */}
       <div className="relative z-10 mx-auto flex min-h-[440px] max-w-6xl flex-col px-5 pb-14 pt-6 sm:px-8">
         {header}
-        <div className="grid flex-1 items-center gap-10 py-6 lg:grid-cols-[1.35fr,1fr]">
+        <div className="grid flex-1 items-center gap-10 pb-6 pt-8 lg:grid-cols-[1.35fr,1fr] lg:pt-12">
           <div className="max-w-2xl">
             <div className="mb-3 font-mono text-[11px] uppercase tracking-[0.2em] text-white/70">
               {t.hero.kicker} · {dateStr}
@@ -57,7 +57,11 @@ export function SkyHero({ overview, sunPosition, header, now }: {
             </p>
           </div>
           <div className="w-full justify-self-center lg:justify-self-end">
-            <SkyCompass overview={overview} sunPosition={sunPosition} now={now} />
+            {/* the live tracker, grouped into its own frosted panel so its chip
+                reads as the radar's label — not a stray control by the header */}
+            <div className="mx-auto w-full max-w-[340px] rounded-[28px] border border-white/12 bg-white/[0.05] p-5 shadow-[0_10px_44px_rgba(0,0,0,0.28)] backdrop-blur-md sm:p-6">
+              <SkyCompass overview={overview} sunPosition={sunPosition} now={now} />
+            </div>
           </div>
         </div>
       </div>
