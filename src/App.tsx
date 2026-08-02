@@ -37,6 +37,7 @@ function SectionHead({ title, aside }: { title: string; aside?: React.ReactNode 
 }
 
 export default function App() {
+  const { t } = useLang();
   const [loc, setLoc] = useState<Location>(() => loadLocation() ?? DEFAULT_LOCATION);
   const [frame, setFrame] = useState<Frame>("earth");
   const [selected, setSelected] = useState<BodyKey | null>(null);
@@ -70,7 +71,7 @@ export default function App() {
           <div className="mx-auto flex min-h-[300px] max-w-6xl flex-col px-5 pb-16 pt-6 sm:px-8">
             {header}
             <p className="mt-auto pt-14 font-mono text-muted">
-              {skyError ? `${skyError} · retrying…` : loading ? "reading your sky…" : ""}
+              {skyError ? `${skyError} · ${t.status.retrying}` : loading ? t.status.readingSky : ""}
             </p>
           </div>
         </section>
@@ -83,19 +84,19 @@ export default function App() {
         {/* 3 · zoom out — the whole sky, two views */}
         <section className="mt-16">
           <SectionHead
-            title="Zoom out — the whole sky, two honest views"
+            title={t.sections.zoomOut}
             aside={<FrameToggle value={frame} onChange={setFrame} showCaption={false} />}
           />
           <div className="grid gap-5 lg:grid-cols-[1.35fr,1fr]">
             <div className="flex flex-col items-center rounded-2xl border border-rule bg-card/40 p-5 backdrop-blur-sm">
-              {posError && <p className="mb-2 font-mono text-sm text-accent">{posError} · retrying…</p>}
+              {posError && <p className="mb-2 font-mono text-sm text-accent">{posError} · {t.status.retrying}</p>}
               {positions && <Dial frame={frame} positions={positions} onSelect={setSelected} />}
-              {!positions && <p className="py-16 font-mono text-muted">plotting positions…</p>}
+              {!positions && <p className="py-16 font-mono text-muted">{t.dial.plotting}</p>}
               {positions && frame === "helio" && positions.helio.length === 0 && (
-                <p className="mt-2 font-mono text-sm text-muted">Heliocentric data unavailable</p>
+                <p className="mt-2 font-mono text-sm text-muted">{t.dial.helioUnavailable}</p>
               )}
               <p className="mt-3 max-w-md text-center font-mono text-[11px] text-faint">
-                You’re at the centre. Angle = direction in your sky; ring = distance out along the ecliptic.
+                {t.dial.centreHint}
               </p>
             </div>
             <div className="flex flex-col gap-4">
@@ -112,7 +113,7 @@ export default function App() {
         {/* 4 · today in detail */}
         {overview && (
           <section className="mt-16">
-            <SectionHead title="Today in detail" />
+            <SectionHead title={t.sections.todayDetail} />
             <div className="grid gap-4 md:grid-cols-3">
               <SunCard overview={overview} />
               <TwilightCard overview={overview} />
@@ -124,12 +125,12 @@ export default function App() {
         {/* 5 · upcoming moon phases */}
         {moonPhases && moonPhases.length > 0 && (
           <section className="mt-16">
-            <SectionHead title="Upcoming moon phases" />
+            <SectionHead title={t.sections.moonPhases} />
             <MoonPhases phases={moonPhases} now={now} />
           </section>
         )}
         {moonPhasesError && !moonPhases && (
-          <p className="mt-8 font-mono text-xs text-muted">moon phases unavailable</p>
+          <p className="mt-8 font-mono text-xs text-muted">{t.errors.moonPhases}</p>
         )}
 
         {/* 6 · monthly calendar */}
@@ -139,16 +140,16 @@ export default function App() {
           </section>
         )}
         {calendarError && !calendar && (
-          <p className="mt-4 font-mono text-xs text-muted">calendar unavailable</p>
+          <p className="mt-4 font-mono text-xs text-muted">{t.errors.calendar}</p>
         )}
 
         {sunPositionError && !sunPosition && (
-          <p className="mt-8 font-mono text-xs text-muted">live sun position unavailable</p>
+          <p className="mt-8 font-mono text-xs text-muted">{t.errors.sunPosition}</p>
         )}
 
         <footer className="mt-16 border-t border-rule pt-5">
           {positions ? <Clock datetime={positions.datetime} />
-            : <p className="font-mono text-xs text-faint">data: Horizon + Orrery APIs · positions are live</p>}
+            : <p className="font-mono text-xs text-faint">{t.footer.dataNote}</p>}
         </footer>
       </div>
     </main>
