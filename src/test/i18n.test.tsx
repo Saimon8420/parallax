@@ -5,6 +5,9 @@ import { DICT } from "../i18n/dict";
 import { inTime, localizeDayLength } from "../i18n/format";
 import { LanguageProvider } from "../i18n/LanguageProvider";
 import { useLang } from "../i18n/useLang";
+import { StatStrip } from "../components/StatStrip";
+import overviewFix from "./fixtures/overview.json";
+import { normalizeOverview } from "../lib/horizonClient";
 
 describe("localizeDigits", () => {
   it("maps ASCII digits to Bengali numerals in bn", () => {
@@ -74,5 +77,17 @@ describe("LanguageProvider", () => {
   it("honours initialLang for tests", () => {
     render(<LanguageProvider initialLang="bn"><Probe /></LanguageProvider>);
     expect(screen.getByTestId("lang").textContent).toBe("bn");
+  });
+});
+
+describe("StatStrip (bn)", () => {
+  it("labels the strip in Bengali", () => {
+    render(
+      <LanguageProvider initialLang="bn">
+        <StatStrip overview={normalizeOverview(overviewFix)} now={new Date("2026-08-01T11:12:00Z")} />
+      </LanguageProvider>,
+    );
+    expect(screen.getByText("সূর্যাস্ত")).toBeTruthy();
+    expect(screen.getByText("দিনের দৈর্ঘ্য")).toBeTruthy();
   });
 });
