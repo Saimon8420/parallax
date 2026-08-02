@@ -1,7 +1,10 @@
 import { describe, it, expect } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { localizeDigits } from "../i18n/localizeDigits";
 import { DICT } from "../i18n/dict";
 import { inTime, localizeDayLength } from "../i18n/format";
+import { LanguageProvider } from "../i18n/LanguageProvider";
+import { useLang } from "../i18n/useLang";
 
 describe("localizeDigits", () => {
   it("maps ASCII digits to Bengali numerals in bn", () => {
@@ -40,5 +43,36 @@ describe("format helpers", () => {
   it("localizeDayLength", () => {
     expect(localizeDayLength("13h 13m", "en")).toBe("13h 13m");
     expect(localizeDayLength("13h 13m", "bn")).toBe("১৩ ঘ ১৩ মি");
+  });
+});
+
+function Probe() {
+  const { lang, setLang, t, n } = useLang();
+  return (
+    <div>
+      <span data-testid="lang">{lang}</span>
+      <span data-testid="tag">{t.brand.tagline}</span>
+      <span data-testid="num">{n("2026")}</span>
+      <button onClick={() => setLang("bn")}>go-bn</button>
+    </div>
+  );
+}
+
+describe("LanguageProvider", () => {
+  it("defaults to English", () => {
+    render(<LanguageProvider><Probe /></LanguageProvider>);
+    expect(screen.getByTestId("lang").textContent).toBe("en");
+    expect(screen.getByTestId("num").textContent).toBe("2026");
+  });
+  it("switches to Bengali and localizes numbers", () => {
+    render(<LanguageProvider><Probe /></LanguageProvider>);
+    fireEvent.click(screen.getByText("go-bn"));
+    expect(screen.getByTestId("lang").textContent).toBe("bn");
+    expect(screen.getByTestId("tag").textContent).toBe("আপনার আকাশ, এই মুহূর্তে");
+    expect(screen.getByTestId("num").textContent).toBe("২০২৬");
+  });
+  it("honours initialLang for tests", () => {
+    render(<LanguageProvider initialLang="bn"><Probe /></LanguageProvider>);
+    expect(screen.getByTestId("lang").textContent).toBe("bn");
   });
 });
