@@ -4,6 +4,7 @@ import { SkyCompass } from "../components/SkyCompass";
 import overview from "./fixtures/overview.json";
 import { normalizeOverview } from "../lib/horizonClient";
 import type { SunPosition } from "../lib/types";
+import { LanguageProvider } from "../i18n/LanguageProvider";
 
 const o = normalizeOverview(overview);
 const sun = (altitude: number, azimuth: number, isUp: boolean): SunPosition => ({
@@ -30,5 +31,15 @@ describe("SkyCompass", () => {
     const preDawn = new Date(`${o.sunrise!.iso.slice(0, 10)}T00:30:00Z`);
     render(<SkyCompass overview={bothDown} sunPosition={sun(-20, 300, false)} now={preDawn} />);
     expect(screen.getByText(/next up|resting/i)).toBeTruthy();
+  });
+
+  it("shows the Bengali tracking pill under a bn provider", () => {
+    render(
+      <LanguageProvider initialLang="bn">
+        <SkyCompass overview={o} sunPosition={{ azimuth: 258, altitude: 34, isUp: true, time: o.sunset! }} now={new Date("2026-08-01T11:12:00Z")} />
+      </LanguageProvider>,
+    );
+    expect(screen.getByText(/এখন অনুসরণ/)).toBeTruthy();
+    expect(screen.getAllByText(/৩৪°/).length).toBeGreaterThan(0);
   });
 });
