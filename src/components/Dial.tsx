@@ -1,18 +1,19 @@
 import type { BodyKey, Positions } from "../lib/types";
 import type { Frame } from "../lib/projection";
 import { polarToXY, bandRadii, logRadius } from "../lib/projection";
-import { BODY_META } from "../lib/bodies";
 import { BodyMark } from "./BodyMark";
+import { useLang } from "../i18n/useLang";
 
 const SIZE = 640, C = SIZE / 2, R_IN = 70, R_OUT = 280;
 
 export function Dial({ frame, positions, onSelect }: {
   frame: Frame; positions: Positions; onSelect: (k: BodyKey) => void;
 }) {
+  const { t, n } = useLang();
   const marks =
-    frame === "earth" ? earthMarks(positions, onSelect) : helioMarks(positions, onSelect);
+    frame === "earth" ? earthMarks(positions, onSelect, t.bodies) : helioMarks(positions, onSelect, t.bodies);
   const rings = ringRadii(frame, positions);
-  const centerLabel = frame === "earth" ? "YOU" : "SUN";
+  const centerLabel = frame === "earth" ? t.dial.you : t.dial.sun;
   return (
     <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="w-full max-w-[560px]">
       <defs>
@@ -29,14 +30,14 @@ export function Dial({ frame, positions, onSelect }: {
       ))}
       {/* emphasised ecliptic ring + label */}
       <circle cx={C} cy={C} r={R_OUT} className="fill-none stroke-muted" strokeWidth={1} strokeOpacity={0.5} />
-      <text x={C + R_OUT - 6} y={C - 8} className="fill-faint font-mono" fontSize="11" textAnchor="end">ecliptic</text>
+      <text x={C + R_OUT - 6} y={C - 8} className="fill-faint font-mono" fontSize="11" textAnchor="end">{t.dial.ecliptic}</text>
 
       {/* ecliptic longitude ticks */}
       {[0, 90, 180, 270].map((deg) => {
         const p = polarToXY(C, C, R_OUT + 20, deg);
         return (
           <text key={deg} x={p.x} y={p.y + 3} className="fill-muted font-mono" fontSize="11" textAnchor="middle">
-            {deg}°
+            {n(deg)}°
           </text>
         );
       })}
@@ -60,19 +61,19 @@ function ringRadii(frame: Frame, p: Positions): number[] {
   return helio.map((b) => logRadius(b.heliocentricDistanceAu, max, R_IN, R_OUT));
 }
 
-function earthMarks(p: Positions, onSelect: (k: BodyKey) => void) {
+function earthMarks(p: Positions, onSelect: (k: BodyKey) => void, bodies: Record<BodyKey, string>) {
   const ordered = [...p.geo].sort((a, b) => a.distanceAu - b.distanceAu);
   const radii = bandRadii(ordered.length, R_IN, R_OUT);
   return ordered.map((b, i) => {
     const { x, y } = polarToXY(C, C, radii[i], b.eclipticLongitude);
     return (
       <BodyMark key={b.key} bodyKey={b.key} x={x} y={y}
-        label={BODY_META[b.key].label} accent={false} onSelect={onSelect} />
+        label={bodies[b.key]} accent={false} onSelect={onSelect} />
     );
   });
 }
 
-function helioMarks(p: Positions, onSelect: (k: BodyKey) => void) {
+function helioMarks(p: Positions, onSelect: (k: BodyKey) => void, bodies: Record<BodyKey, string>) {
   const helio = p.helio.filter((b) => b.key !== "pluto");
   const max = Math.max(...helio.map((b) => b.heliocentricDistanceAu), 1);
   return helio.map((b) => {
@@ -80,7 +81,7 @@ function helioMarks(p: Positions, onSelect: (k: BodyKey) => void) {
     const { x, y } = polarToXY(C, C, r, b.heliocentricLongitude);
     return (
       <BodyMark key={b.key} bodyKey={b.key} x={x} y={y}
-        label={BODY_META[b.key].label} accent={b.key === "earth"} onSelect={onSelect} />
+        label={bodies[b.key]} accent={b.key === "earth"} onSelect={onSelect} />
     );
   });
 }

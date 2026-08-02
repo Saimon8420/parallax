@@ -1,9 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { Dial } from "../components/Dial";
 import positions from "./fixtures/positions.json";
 import helio from "./fixtures/heliocentric.json";
 import { normalizePositions } from "../lib/orreryClient";
+import { LanguageProvider } from "../i18n/LanguageProvider";
 
 const p = normalizePositions(positions, helio);
 
@@ -18,5 +19,15 @@ describe("Dial", () => {
     const expected = p.helio.filter((b) => b.key !== "pluto").length;
     expect(container.querySelectorAll("[data-body]").length).toBe(expected);
     expect(container.querySelector('[data-body="pluto"]')).toBeNull();
+  });
+
+  it("renders Bengali labels and numerals under a bn provider", () => {
+    render(
+      <LanguageProvider initialLang="bn">
+        <Dial frame="earth" positions={p} onSelect={() => {}} />
+      </LanguageProvider>,
+    );
+    expect(screen.getByText("আপনি")).toBeTruthy();
+    expect(screen.getByText("৯০°")).toBeTruthy();
   });
 });

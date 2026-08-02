@@ -33,7 +33,7 @@ export function SkyHero({ overview, sunPosition, header, now }: {
     <section
       className="relative overflow-hidden"
       style={{ backgroundImage: gradient }}
-      aria-label="Your sky right now"
+      aria-label={t.hero.ariaLabel}
     >
       {/* starfield — brighter at night */}
       <div

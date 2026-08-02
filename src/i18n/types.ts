@@ -8,7 +8,7 @@ export interface Dict {
   status: { readingSky: string; retrying: string };
   errors: { moonPhases: string; calendar: string; sunPosition: string };
   footer: { dataNote: string; local: string; computedAt: string };
-  hero: { kicker: string; sunriseE: string; horizon: string; sunsetW: string };
+  hero: { kicker: string; sunriseE: string; horizon: string; sunsetW: string; ariaLabel: string };
   compass: string[];       // 16 full names
   compassAbbr: string[];   // 16 short forms
   rose: { n: string; e: string; s: string; w: string; zenith: string };

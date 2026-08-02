@@ -27,7 +27,7 @@ export const en: Dict = {
     local: "local",
     computedAt: "computed at",
   },
-  hero: { kicker: "Your sky", sunriseE: "sunrise", horizon: "the horizon", sunsetW: "sunset" },
+  hero: { kicker: "Your sky", sunriseE: "sunrise", horizon: "the horizon", sunsetW: "sunset", ariaLabel: "Your sky right now" },
   compass: [
     "north", "north-northeast", "northeast", "east-northeast",
     "east", "east-southeast", "southeast", "south-southeast",
