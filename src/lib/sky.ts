@@ -138,16 +138,18 @@ function moonSentence(overview: SkyOverview, lang: Lang): Segment[] {
   const phase = DICT[lang].moonPhases[m.phaseName] ?? m.phaseName;
   const t24 = (t: SkyTime) => localizeDigits(t.time24, lang);
   if (lang === "bn") {
+    // The Bengali phase names already end in the moon-noun (স্ফীত চাঁদ / অর্ধচাঁদ /
+    // কাস্তে-চাঁদ / পূর্ণিমা / অমাবস্যা), so we must NOT append another "চাঁদ".
     const desc = `${pct(m.illuminationFraction, lang)}-আলোকিত ${phase}`;
-    if (m.alwaysUp) return [{ t: "একটি " }, { t: desc, b: true }, { t: " চাঁদ সারা রাত আকাশে।" }];
-    if (m.alwaysDown) return [{ t: "একটি " }, { t: desc, b: true }, { t: " চাঁদ দিগন্তের নিচেই থাকে।" }];
+    if (m.alwaysUp) return [{ t: "একটি " }, { t: desc, b: true }, { t: " সারা রাত আকাশে।" }];
+    if (m.alwaysDown) return [{ t: "একটি " }, { t: desc, b: true }, { t: " দিগন্তের নিচেই থাকে।" }];
     if (m.position.altitude > 0) {
-      const seg: Segment[] = [{ t: "একটি " }, { t: desc, b: true }, { t: " চাঁদ আকাশে" }];
+      const seg: Segment[] = [{ t: "একটি " }, { t: desc, b: true }, { t: " আকাশে" }];
       if (m.set) seg.push({ t: ", অস্ত যাবে " }, { t: t24(m.set), b: true }, { t: "-এ" });
       seg.push({ t: "।" });
       return seg;
     }
-    const seg: Segment[] = [{ t: "একটি " }, { t: desc, b: true }, { t: " চাঁদ এখনও দিগন্তের নিচে" }];
+    const seg: Segment[] = [{ t: "একটি " }, { t: desc, b: true }, { t: " এখনও দিগন্তের নিচে" }];
     if (m.rise) seg.push({ t: " — উঠবে " }, { t: t24(m.rise), b: true }, { t: "-এ" });
     seg.push({ t: "।" });
     return seg;

@@ -4,7 +4,7 @@ export const bn: Dict = {
   brand: { tagline: "আপনার আকাশ, এই মুহূর্তে" },
   switcher: { en: "EN", bn: "বাংলা", aria: "ভাষা" },
   sections: {
-    zoomOut: "পিছিয়ে দেখুন — পুরো আকাশ, দুই সৎ দৃষ্টিকোণ",
+    zoomOut: "পিছিয়ে দেখুন — পুরো আকাশ, দুটি সত্যিকারের দৃষ্টিকোণ",
     todayDetail: "আজকের বিস্তারিত",
     moonPhases: "আসন্ন চাঁদের দশা",
   },
@@ -34,17 +34,19 @@ export const bn: Dict = {
     "দক্ষিণ", "দক্ষিণ-দক্ষিণপশ্চিম", "দক্ষিণপশ্চিম", "পশ্চিম-দক্ষিণপশ্চিম",
     "পশ্চিম", "পশ্চিম-উত্তরপশ্চিম", "উত্তরপশ্চিম", "উত্তর-উত্তরপশ্চিম",
   ],
+  // Compact direction codes kept in Latin for legibility (the full spoken name in
+  // the lede stays Bengali, e.g. "পূর্ব-দক্ষিণপূর্ব"); "পূদপূ"-style Bengali codes are unreadable.
   compassAbbr: [
-    "উ", "উউপূ", "উপূ", "পূউপূ", "পূ", "পূদপূ", "দপূ", "দদপূ",
-    "দ", "দদপ", "দপ", "পদপ", "প", "পউপ", "উপ", "উউপ",
+    "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+    "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW",
   ],
   rose: { n: "উ", e: "পূ", s: "দ", w: "প", zenith: "শীর্ষবিন্দু" },
   compassPill: {
-    nowTracking: "এখন অনুসরণ", nextUp: "পরবর্তী:", theSun: "সূর্য", theMoon: "চাঁদ",
+    nowTracking: "অনুসরণ করছে", nextUp: "পরবর্তী:", theSun: "সূর্য", theMoon: "চাঁদ",
     theSky: "আকাশ", resting: "বিশ্রামে — দিগন্তের উপরে কিছু নেই", ariaPrefix: "আকাশ কম্পাস",
     lit: "আলোকিত", rises: "উঠবে", upDeg: "উপরে", below: "নিচে",
   },
-  stat: { sunset: "সূর্যাস্ত", goldenHour: "সোনালি সময়", dayLength: "দিনের দৈর্ঘ্য", moonrise: "চাঁদোদয়", moon: "চাঁদ", up: "উপরে" },
+  stat: { sunset: "সূর্যাস্ত", goldenHour: "সোনালি আলো", dayLength: "দিনের দৈর্ঘ্য", moonrise: "চাঁদোদয়", moon: "চাঁদ", up: "উপরে" },
   legend: {
     title: "এই মুহূর্তে আপনার আকাশে যা আছে", up: "উপরে", below: "নিচে",
     brand: "প্যারালাক্স", def: "= দৃষ্টিকোণ বদলালে যে সরণ ঘটে।", fromEarth: "পৃথিবী থেকে",
@@ -52,8 +54,8 @@ export const bn: Dict = {
   },
   cards: {
     sun: "সূর্য", twilight: "গোধূলি", moon: "চাঁদ",
-    sunrise: "সূর্যোদয়", solarNoon: "সৌর মধ্যাহ্ন", sunset: "সূর্যাস্ত", goldenHour: "সোনালি সময়", dayLength: "দিনের দৈর্ঘ্য",
-    civil: "বেসামরিক", nautical: "নৌ", astronomical: "জ্যোতির্বৈজ্ঞানিক", firstLight: "প্রথম আলো", lastLight: "শেষ আলো",
+    sunrise: "সূর্যোদয়", solarNoon: "সৌর মধ্যাহ্ন", sunset: "সূর্যাস্ত", goldenHour: "সোনালি আলো", dayLength: "দিনের দৈর্ঘ্য",
+    civil: "সাধারণ গোধূলি", nautical: "নৌ গোধূলি", astronomical: "জ্যোতির্বৈজ্ঞানিক গোধূলি", firstLight: "প্রথম আলো", lastLight: "শেষ আলো",
     distance: "দূরত্ব", position: "অবস্থান", upAlt: "উপরে · উচ্চতা", belowAz: "নিচে · দিগংশ", km: "কিমি",
   },
   moonGlyph: { lit: "আলোকিত", upAllDay: "সারাদিন উপরে", downAllDay: "সারাদিন নিচে", rise: "উদয়", set: "অস্ত", az: "দিগংশ", alt: "উচ্চতা" },
@@ -66,7 +68,7 @@ export const bn: Dict = {
   location: { change: "অবস্থান বদলান", search: "শহর খুঁজুন…", useMine: "আমার অবস্থান ব্যবহার করুন" },
   frame: {
     fromEarth: "পৃথিবী থেকে", fromAbove: "উপর থেকে",
-    caption: "দুই সৎ দৃষ্টিকোণ — এরা মেলে না, আর সেটাই সঠিক পদার্থবিজ্ঞান।",
+    caption: "দুটি সত্যিকারের দৃষ্টিকোণ — এরা মেলে না, আর সেটাই সঠিক পদার্থবিজ্ঞান।",
   },
   units: { hourLong: "ঘন্টা", minuteLong: "মিনিট" },
   bodies: {
@@ -74,9 +76,9 @@ export const bn: Dict = {
     jupiter: "বৃহস্পতি", saturn: "শনি", uranus: "ইউরেনাস", neptune: "নেপচুন", pluto: "প্লুটো",
   },
   moonPhases: {
-    "New Moon": "অমাবস্যা", "Waxing Crescent": "বর্ধমান কাস্তে-চাঁদ", "First Quarter": "প্রথম চতুর্থাংশ",
-    "Waxing Gibbous": "বর্ধমান গিব্বাস", "Full Moon": "পূর্ণিমা", "Waning Gibbous": "ক্ষয়িষ্ণু গিব্বাস",
-    "Last Quarter": "শেষ চতুর্থাংশ", "Waning Crescent": "ক্ষয়িষ্ণু কাস্তে-চাঁদ",
+    "New Moon": "অমাবস্যা", "Waxing Crescent": "বর্ধমান কাস্তে-চাঁদ", "First Quarter": "প্রথম অর্ধচাঁদ",
+    "Waxing Gibbous": "বর্ধমান স্ফীত চাঁদ", "Full Moon": "পূর্ণিমা", "Waning Gibbous": "ক্ষয়িষ্ণু স্ফীত চাঁদ",
+    "Last Quarter": "শেষ অর্ধচাঁদ", "Waning Crescent": "ক্ষয়িষ্ণু কাস্তে-চাঁদ",
   },
   weekdays: ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহস্পতি", "শুক্র", "শনি"],
   months: ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"],

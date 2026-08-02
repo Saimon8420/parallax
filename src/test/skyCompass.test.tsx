@@ -39,7 +39,7 @@ describe("SkyCompass", () => {
         <SkyCompass overview={o} sunPosition={{ azimuth: 258, altitude: 34, isUp: true, time: o.sunset! }} now={new Date("2026-08-01T11:12:00Z")} />
       </LanguageProvider>,
     );
-    expect(screen.getByText(/এখন অনুসরণ/)).toBeTruthy();
+    expect(screen.getByText(/অনুসরণ করছে/)).toBeTruthy();
     expect(screen.getAllByText(/৩৪°/).length).toBeGreaterThan(0);
   });
 });
