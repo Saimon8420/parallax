@@ -3,6 +3,7 @@ import type { BodyKey, Location } from "./lib/types";
 import type { Frame } from "./lib/projection";
 import { DEFAULT_LOCATION, loadLocation, saveLocation } from "./lib/geo";
 import { useSky } from "./lib/useSky";
+import { useLang } from "./i18n/useLang";
 import { Dial } from "./components/Dial";
 import { FrameToggle } from "./components/FrameToggle";
 import { SkyHero } from "./components/SkyHero";
@@ -14,12 +15,14 @@ import { BodyDetail } from "./components/BodyDetail";
 import { Clock } from "./components/Clock";
 import { MoonPhases } from "./components/MoonPhases";
 import { SkyCalendar } from "./components/SkyCalendar";
+import { LanguageSwitcher } from "./components/LanguageSwitcher";
 
 function Brand() {
+  const { t } = useLang();
   return (
     <div>
       <h1 className="font-display text-2xl font-bold uppercase tracking-[0.14em] text-ink">Parallax</h1>
-      <p className="font-mono text-[11px] text-white/70">your sky, right now</p>
+      <p className="font-mono text-[11px] text-white/70">{t.brand.tagline}</p>
     </div>
   );
 }
@@ -50,7 +53,10 @@ export default function App() {
   const header = (
     <div className="flex flex-wrap items-center justify-between gap-4">
       <Brand />
-      <LocationBar current={loc} onPick={pick} />
+      <div className="flex items-center gap-3">
+        <LanguageSwitcher />
+        <LocationBar current={loc} onPick={pick} />
+      </div>
     </div>
   );
 
